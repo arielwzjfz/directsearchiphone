@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direct Search</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="puppy-decoration top-left">
+            <svg viewBox="0 0 100 100" class="puppy-svg">
+                <path d="M50 20 C30 20, 20 40, 20 60 C20 80, 40 90, 50 90 C60 90, 80 80, 80 60 C80 40, 70 20, 50 20" fill="#FFD700"/>
+                <circle cx="35" cy="45" r="5" fill="#000"/>
+                <circle cx="65" cy="45" r="5" fill="#000"/>
+                <path d="M40 65 C45 75, 55 75, 60 65" stroke="#000" stroke-width="2" fill="none"/>
+            </svg>
+        </div>
+        <h1>Direct Search</h1>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="What would you like to search?">
+            <div class="platform-buttons">
+                <button onclick="performSearch('youtube')" class="platform-button youtube">
+                    <img src="https://www.youtube.com/favicon.ico" alt="YouTube" class="platform-icon">
+                    YouTube
+                </button>
+                <button onclick="performSearch('xiaohongshu')" class="platform-button xiaohongshu">
+                    <img src="https://www.xiaohongshu.com/favicon.ico" alt="Xiaohongshu" class="platform-icon">
+                    小红书
+                </button>
+                <button onclick="performSearch('bilibili')" class="platform-button bilibili">
+                    <img src="https://www.bilibili.com/favicon.ico" alt="Bilibili" class="platform-icon">
+                    Bilibili
+                </button>
+                <button onclick="performSearch('tiktok')" class="platform-button tiktok">
+                    <img src="https://www.tiktok.com/favicon.ico" alt="TikTok" class="platform-icon">
+                    TikTok
+                </button>
+            </div>
+        </div>
+        <div class="puppy-decoration bottom-right">
+            <svg viewBox="0 0 100 100" class="puppy-svg">
+                <path d="M50 20 C30 20, 20 40, 20 60 C20 80, 40 90, 50 90 C60 90, 80 80, 80 60 C80 40, 70 20, 50 20" fill="#FFB6C1"/>
+                <circle cx="35" cy="45" r="5" fill="#000"/>
+                <circle cx="65" cy="45" r="5" fill="#000"/>
+                <path d="M40 65 C45 75, 55 75, 60 65" stroke="#000" stroke-width="2" fill="none"/>
+            </svg>
+        </div>
+    </div>
+    <script>
+        function performSearch(platform, event) {
+            // Prevent the default button behavior
+            if (event) {
+                event.preventDefault();
+            }
+
+            const searchQuery = document.getElementById('searchInput').value.trim();
+            if (!searchQuery) return;
+
+            const encodedQuery = encodeURIComponent(searchQuery);
+            let appUrl = '';
+
+            // Only handle iOS devices
+            if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                switch (platform) {
+                    case 'youtube':
+                        appUrl = `youtube://results?search_query=${encodedQuery}`;
+                        break;
+                    case 'xiaohongshu':
+                        appUrl = `xhsdiscover://search/result?keyword=${encodedQuery}`;
+                        break;
+                    case 'bilibili':
+                        appUrl = `bilibili://search?keyword=${encodedQuery}`;
+                        break;
+                    case 'tiktok':
+                        appUrl = `tiktok://search?q=${encodedQuery}`;
+                        break;
+                }
+
+                // Try to open the app directly
+                window.location.href = appUrl;
+            }
+        }
+
+        // Add event listener for Enter key
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch('youtube', e);
+            }
+        });
+    </script>
+</body>
+</html> 
