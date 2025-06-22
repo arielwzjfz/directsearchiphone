@@ -146,13 +146,13 @@
             let appOpened = false;
             
             // // Set a timeout to detect if the app opened
-            // const timeout = setTimeout(() => {
-            //     // If we reach this timeout, the app probably didn't open
-            //     // So we fallback to the web version
-            //     if (!appOpened) {
-            //         window.open(webUrl, '_blank');
-            //     }
-            // }, 2000); // 2 second timeout
+            const timeout = setTimeout(() => {
+                // If we reach this timeout, the app probably didn't open
+                // So we fallback to the web version
+                if (!appOpened) {
+                    window.open(webUrl, '_blank');
+                }
+            }, 2000); // 2 second timeout
 
             // Listen for page visibility change (indicates app opened)
             const handleVisibilityChange = () => {
