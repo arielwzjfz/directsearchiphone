@@ -139,8 +139,18 @@
 
             document.addEventListener('visibilitychange', handleVisibilityChange);
             
-            // Try to open the app
-            window.location.href = appUrl;
+            // Use a hidden iframe to try opening the app without triggering Safari errors
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = appUrl;
+            document.body.appendChild(iframe);
+            
+            // Remove the iframe after a short delay
+            setTimeout(() => {
+                if (document.body.contains(iframe)) {
+                    document.body.removeChild(iframe);
+                }
+            }, 100);
         }
 
         // Add event listeners for Enter key on each search input
