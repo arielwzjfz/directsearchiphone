@@ -151,7 +151,8 @@
                 // So we fallback to the web version
                 if (!appOpened) {
                     console.log("appOpened Failed, fall back to web");
-                    window.open(webUrl, '_blank');
+                    window.location.href = webUrl;
+                    //window.open(webUrl, '_blank');
                 }
             }, 2000); // 2 second timeout
 
@@ -194,7 +195,8 @@
                 console.log("trying Web opening");
                 // If there's any error, fallback to web immediately
                 clearTimeout(timeout);
-                window.open(webUrl, '_blank');
+                //window.open(webUrl, '_blank');
+                window.location.href = webUrl;
             }
         }
 
