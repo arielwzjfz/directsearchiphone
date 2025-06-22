@@ -17,25 +17,47 @@
             </svg>
         </div>
         <h1>Direct Search</h1>
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="What would you like to search?">
-            <div class="platform-buttons">
-                <button onclick="performSearch('youtube')" class="platform-button youtube">
+        <div class="search-container">
+            <!-- YouTube Search Box -->
+            <div class="search-box youtube-box">
+                <div class="search-header">
                     <img src="https://www.youtube.com/favicon.ico" alt="YouTube" class="platform-icon">
-                    YouTube
-                </button>
-                <button onclick="performSearch('xiaohongshu')" class="platform-button xiaohongshu">
+                    <h3>YouTube</h3>
+                </div>
+                <div class="search-input-group">
+                    <input type="text" id="youtubeSearch" placeholder="Search YouTube...">
+                    <button onclick="performSearch('youtube', event)" class="search-button youtube-btn">
+                        Search
+                    </button>
+                </div>
+            </div>
+
+            <!-- Xiaohongshu Search Box -->
+            <div class="search-box xiaohongshu-box">
+                <div class="search-header">
                     <img src="https://www.xiaohongshu.com/favicon.ico" alt="Xiaohongshu" class="platform-icon">
-                    小红书
-                </button>
-                <button onclick="performSearch('bilibili')" class="platform-button bilibili">
+                    <h3>小红书</h3>
+                </div>
+                <div class="search-input-group">
+                    <input type="text" id="xiaohongshuSearch" placeholder="Search 小红书...">
+                    <button onclick="performSearch('xiaohongshu', event)" class="search-button xiaohongshu-btn">
+                        Search
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bilibili Search Box -->
+            <div class="search-box bilibili-box">
+                <div class="search-header">
                     <img src="https://www.bilibili.com/favicon.ico" alt="Bilibili" class="platform-icon">
-                    Bilibili
-                </button>
-                <button onclick="performSearch('tiktok')" class="platform-button tiktok">
-                    <img src="https://www.tiktok.com/favicon.ico" alt="TikTok" class="platform-icon">
-                    TikTok
-                </button>
+                    <h3>Bilibili</h3>
+                </div>
+                <div class="search-input-group">
+                    <input type="text" id="bilibiliSearch" placeholder="Search Bilibili...">
+                    <button onclick="performSearch('bilibili', event)" class="search-button bilibili-btn">
+                        Search
+                    </button>
+                </div>
             </div>
         </div>
         <div class="puppy-decoration bottom-right">
@@ -54,7 +76,19 @@
                 event.preventDefault();
             }
 
-            const searchQuery = document.getElementById('searchInput').value.trim();
+            let searchQuery = '';
+            switch (platform) {
+                case 'youtube':
+                    searchQuery = document.getElementById('youtubeSearch').value.trim();
+                    break;
+                case 'xiaohongshu':
+                    searchQuery = document.getElementById('xiaohongshuSearch').value.trim();
+                    break;
+                case 'bilibili':
+                    searchQuery = document.getElementById('bilibiliSearch').value.trim();
+                    break;
+            }
+
             if (!searchQuery) return;
 
             const encodedQuery = encodeURIComponent(searchQuery);
@@ -72,9 +106,6 @@
                     case 'bilibili':
                         appUrl = `bilibili://search?keyword=${encodedQuery}`;
                         break;
-                    case 'tiktok':
-                        appUrl = `tiktok://search?q=${encodedQuery}`;
-                        break;
                 }
 
                 // Try to open the app directly
@@ -82,10 +113,22 @@
             }
         }
 
-        // Add event listener for Enter key
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        // Add event listeners for Enter key on each search input
+        document.getElementById('youtubeSearch').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 performSearch('youtube', e);
+            }
+        });
+
+        document.getElementById('xiaohongshuSearch').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch('xiaohongshu', e);
+            }
+        });
+
+        document.getElementById('bilibiliSearch').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch('bilibili', e);
             }
         });
     </script>
