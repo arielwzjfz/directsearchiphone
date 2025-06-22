@@ -140,26 +140,20 @@
         }
 
         function tryOpenAppWithFallback(appUrl, webUrl) {
-            console.log("tryOpenAppWithFallback:" + appUrl + " " + webUrl);
-            // Store the current page visibility state
+            console.log("tryOpenAppWithFallback:", appUrl, webUrl);
+
             const wasHidden = document.hidden;
             let appOpened = false;
-            
-            // // Set a timeout to detect if the app opened
+
             const timeout = setTimeout(() => {
-                // If we reach this timeout, the app probably didn't open
-                // So we fallback to the web version
                 if (!appOpened) {
                     console.log("appOpened Failed, fall back to web");
-                    window.location.href = webUrl;
-                    //window.open(webUrl, '_blank');
+                    window.location.href = webUrl;  // use this instead of window.open
                 }
-            }, 2000); // 2 second timeout
+            }, 2000);
 
-            // Listen for page visibility change (indicates app opened)
             const handleVisibilityChange = () => {
                 if (document.hidden && !wasHidden) {
-                    // App opened successfully
                     appOpened = true;
                     clearTimeout(timeout);
                     document.removeEventListener('visibilitychange', handleVisibilityChange);
@@ -167,38 +161,32 @@
             };
 
             document.addEventListener('visibilitychange', handleVisibilityChange);
-            
-            // Try multiple methods to open the app
+
             try {
                 console.log("trying App opening");
-                // Method 1: Try with iframe
                 const iframe = document.createElement('iframe');
                 iframe.style.display = 'none';
                 iframe.src = appUrl;
                 document.body.appendChild(iframe);
-                
-                // Remove the iframe after a short delay
+
                 setTimeout(() => {
                     if (document.body.contains(iframe)) {
                         document.body.removeChild(iframe);
                     }
                 }, 100);
-                
-                // Method 2: Also try direct navigation as backup
+
                 setTimeout(() => {
                     if (!appOpened) {
                         window.location.href = appUrl;
                     }
                 }, 500);
-                
             } catch (error) {
-                console.log("trying Web opening");
-                // If there's any error, fallback to web immediately
+                console.log("Exception fallback triggered");
                 clearTimeout(timeout);
-                //window.open(webUrl, '_blank');
                 window.location.href = webUrl;
             }
         }
+
 
         // Add event listeners for Enter key on each search input
         document.getElementById('youtubeSearch').addEventListener('keypress', function(e) {
