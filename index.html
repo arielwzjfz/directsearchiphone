@@ -150,6 +150,7 @@
                 // If we reach this timeout, the app probably didn't open
                 // So we fallback to the web version
                 if (!appOpened) {
+                    console.log("appOpened Failed, fall back to web");
                     window.open(webUrl, '_blank');
                 }
             }, 2000); // 2 second timeout
