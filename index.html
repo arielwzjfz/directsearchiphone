@@ -93,24 +93,54 @@
 
             const encodedQuery = encodeURIComponent(searchQuery);
             let appUrl = '';
+            let webUrl = '';
 
             // Only handle iOS devices
             if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
                 switch (platform) {
                     case 'youtube':
                         appUrl = `youtube://results?search_query=${encodedQuery}`;
+                        webUrl = `https://www.youtube.com/results?search_query=${encodedQuery}`;
                         break;
                     case 'xiaohongshu':
                         appUrl = `xhsdiscover://search/result?keyword=${encodedQuery}`;
+                        webUrl = `https://www.xiaohongshu.com/search_result?keyword=${encodedQuery}`;
                         break;
                     case 'bilibili':
                         appUrl = `bilibili://search?keyword=${encodedQuery}`;
+                        webUrl = `https://search.bilibili.com/all?keyword=${encodedQuery}`;
                         break;
                 }
 
-                // Try to open the app directly
-                window.location.href = appUrl;
+                // Try to open the app first, with fallback to web if app is not installed
+                tryOpenAppWithFallback(appUrl, webUrl);
             }
+        }
+
+        function tryOpenAppWithFallback(appUrl, webUrl) {
+            // Store the current page visibility state
+            const wasHidden = document.hidden;
+            
+            // Set a timeout to detect if the app opened
+            const timeout = setTimeout(() => {
+                // If we reach this timeout, the app probably didn't open
+                // So we fallback to the web version
+                window.open(webUrl, '_blank');
+            }, 1500); // 1.5 second timeout
+
+            // Listen for page visibility change (indicates app opened)
+            const handleVisibilityChange = () => {
+                if (document.hidden && !wasHidden) {
+                    // App opened successfully, clear timeout
+                    clearTimeout(timeout);
+                    document.removeEventListener('visibilitychange', handleVisibilityChange);
+                }
+            };
+
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            
+            // Try to open the app
+            window.location.href = appUrl;
         }
 
         // Add event listeners for Enter key on each search input
