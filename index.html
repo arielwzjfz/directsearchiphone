@@ -72,6 +72,8 @@
     <script>
         function performSearch(platform, event) {
             // Prevent the default button behavior
+            console.log("Platform:" + platform);
+            console.log("Event:" + event);
             if (event) {
                 event.preventDefault();
             }
@@ -90,6 +92,7 @@
             }
 
             if (!searchQuery) return;
+            console.log("searchQuery:" + searchQuery);
 
             const encodedQuery = encodeURIComponent(searchQuery);
             let appUrl = '';
@@ -111,25 +114,45 @@
                         webUrl = `https://search.bilibili.com/all?keyword=${encodedQuery}`;
                         break;
                 }
-
+                console.log("webUrl:" + webUrl);
                 // Try to open the app first, with fallback to web if app is not installed
                 tryOpenAppWithFallback(appUrl, webUrl);
+            }
+            else{
+                console.log("Not on mobile platform")
+                switch (platform) {
+                    case 'youtube':
+                        appUrl = `youtube://results?search_query=${encodedQuery}`;
+                        webUrl = `https://www.youtube.com/results?search_query=${encodedQuery}`;
+                        break;
+                    case 'xiaohongshu':
+                        appUrl = `xhsdiscover://search/result?keyword=${encodedQuery}`;
+                        webUrl = `https://www.xiaohongshu.com/search_result?keyword=${encodedQuery}`;
+                        break;
+                    case 'bilibili':
+                        appUrl = `bilibili://search?keyword=${encodedQuery}`;
+                        webUrl = `https://search.bilibili.com/all?keyword=${encodedQuery}`;
+                        break;
+                }
+                console.log("webUrl:" + webUrl);
+                tryOpenAppWithFallback(webUrl, webUrl);
             }
         }
 
         function tryOpenAppWithFallback(appUrl, webUrl) {
+            console.log("tryOpenAppWithFallback:" + appUrl + " " + webUrl);
             // Store the current page visibility state
             const wasHidden = document.hidden;
             let appOpened = false;
             
-            // Set a timeout to detect if the app opened
-            const timeout = setTimeout(() => {
-                // If we reach this timeout, the app probably didn't open
-                // So we fallback to the web version
-                if (!appOpened) {
-                    window.open(webUrl, '_blank');
-                }
-            }, 2000); // 2 second timeout
+            // // Set a timeout to detect if the app opened
+            // const timeout = setTimeout(() => {
+            //     // If we reach this timeout, the app probably didn't open
+            //     // So we fallback to the web version
+            //     if (!appOpened) {
+            //         window.open(webUrl, '_blank');
+            //     }
+            // }, 2000); // 2 second timeout
 
             // Listen for page visibility change (indicates app opened)
             const handleVisibilityChange = () => {
@@ -145,6 +168,7 @@
             
             // Try multiple methods to open the app
             try {
+                console.log("trying App opening");
                 // Method 1: Try with iframe
                 const iframe = document.createElement('iframe');
                 iframe.style.display = 'none';
@@ -166,6 +190,7 @@
                 }, 500);
                 
             } catch (error) {
+                console.log("trying Web opening");
                 // If there's any error, fallback to web immediately
                 clearTimeout(timeout);
                 window.open(webUrl, '_blank');
