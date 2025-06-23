@@ -17,6 +17,16 @@
             </svg>
         </div>
         <h1>Direct Search</h1>
+        
+        <!-- Toggle Button for App/Web Mode -->
+        <div class="toggle-container">
+            <label class="toggle-switch">
+                <input type="checkbox" id="webModeToggle">
+                <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label" id="toggleLabel">iPhone App</span>
+        </div>
+        
         <div class="search-container">
             <!-- YouTube Search Box -->
             <div class="search-box youtube-box">
@@ -59,14 +69,14 @@
                     </button>
                 </div>
             </div>
-        </div>
-        <div class="puppy-decoration bottom-right">
-            <svg viewBox="0 0 100 100" class="puppy-svg">
-                <path d="M50 20 C30 20, 20 40, 20 60 C20 80, 40 90, 50 90 C60 90, 80 80, 80 60 C80 40, 70 20, 50 20" fill="#FFB6C1"/>
-                <circle cx="35" cy="45" r="5" fill="#000"/>
-                <circle cx="65" cy="45" r="5" fill="#000"/>
-                <path d="M40 65 C45 75, 55 75, 60 65" stroke="#000" stroke-width="2" fill="none"/>
-            </svg>
+            <div class="puppy-decoration bottom-right">
+                <svg viewBox="0 0 100 100" class="puppy-svg">
+                    <path d="M50 20 C30 20, 20 40, 20 60 C20 80, 40 90, 50 90 C60 90, 80 80, 80 60 C80 40, 70 20, 50 20" fill="#FFB6C1"/>
+                    <circle cx="35" cy="45" r="5" fill="#000"/>
+                    <circle cx="65" cy="45" r="5" fill="#000"/>
+                    <path d="M40 65 C45 75, 55 75, 60 65" stroke="#000" stroke-width="2" fill="none"/>
+                </svg>
+            </div>
         </div>
     </div>
     <script>
@@ -98,64 +108,45 @@
             let appUrl = '';
             let webUrl = '';
 
-            // Only handle iOS devices
-            if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-                switch (platform) {
-                    case 'youtube':
-                        appUrl = `youtube://results?search_query=${encodedQuery}`;
-                        webUrl = `https://www.youtube.com/results?search_query=${encodedQuery}`;
-                        break;
-                    case 'xiaohongshu':
-                        appUrl = `xhsdiscover://search/result?keyword=${encodedQuery}`;
-                        webUrl = `https://www.xiaohongshu.com/search_result?keyword=${encodedQuery}`;
-                        break;
-                    case 'bilibili':
-                        appUrl = `bilibili://search?keyword=${encodedQuery}`;
-                        webUrl = `https://search.bilibili.com/all?keyword=${encodedQuery}`;
-                        break;
-                }
-                console.log("webUrl:" + webUrl);
-                // Try to open the app first, with fallback to web if app is not installed
-                tryOpenAppWithFallback(appUrl, webUrl);
+            // Get URLs for both app and web
+            switch (platform) {
+                case 'youtube':
+                    appUrl = `youtube://results?search_query=${encodedQuery}`;
+                    webUrl = `https://www.youtube.com/results?search_query=${encodedQuery}`;
+                    break;
+                case 'xiaohongshu':
+                    appUrl = `xhsdiscover://search/result?keyword=${encodedQuery}`;
+                    webUrl = `https://www.xiaohongshu.com/search_result?keyword=${encodedQuery}`;
+                    break;
+                case 'bilibili':
+                    appUrl = `bilibili://search?keyword=${encodedQuery}`;
+                    webUrl = `https://search.bilibili.com/all?keyword=${encodedQuery}`;
+                    break;
             }
-            else{
-                console.log("Not on mobile platform")
-                switch (platform) {
-                    case 'youtube':
-                        appUrl = `youtube://results?search_query=${encodedQuery}`;
-                        webUrl = `https://www.youtube.com/results?search_query=${encodedQuery}`;
-                        break;
-                    case 'xiaohongshu':
-                        appUrl = `xhsdiscover://search/result?keyword=${encodedQuery}`;
-                        webUrl = `https://www.xiaohongshu.com/search_result?keyword=${encodedQuery}`;
-                        break;
-                    case 'bilibili':
-                        appUrl = `bilibili://search?keyword=${encodedQuery}`;
-                        webUrl = `https://search.bilibili.com/all?keyword=${encodedQuery}`;
-                        break;
-                }
-                console.log("webUrl:" + webUrl);
-                tryOpenAppWithFallback(webUrl, webUrl);
+
+            // Check if web mode is enabled
+            const webModeEnabled = document.getElementById('webModeToggle').checked;
+            
+            if (webModeEnabled) {
+                // Web mode: directly open web URL
+                console.log("Web mode enabled, opening web URL:", webUrl);
+                window.location.href = webUrl;
+            } else {
+                // iPhone app mode: try to open app ONLY, no web fallback
+                console.log("iPhone app mode enabled, trying app only");
+                tryOpenAppOnly(appUrl);
             }
         }
 
-        function tryOpenAppWithFallback(appUrl, webUrl) {
-            console.log("tryOpenAppWithFallback:", appUrl, webUrl);
+        function tryOpenAppOnly(appUrl) {
+            console.log("tryOpenAppOnly:", appUrl);
 
             const wasHidden = document.hidden;
             let appOpened = false;
 
-            const timeout = setTimeout(() => {
-                if (!appOpened) {
-                    console.log("appOpened Failed, fall back to web");
-                    window.location.href = webUrl;  // use this instead of window.open
-                }
-            }, 2000);
-
             const handleVisibilityChange = () => {
                 if (document.hidden && !wasHidden) {
                     appOpened = true;
-                    clearTimeout(timeout);
                     document.removeEventListener('visibilitychange', handleVisibilityChange);
                 }
             };
@@ -181,9 +172,7 @@
                     }
                 }, 500);
             } catch (error) {
-                console.log("Exception fallback triggered");
-                clearTimeout(timeout);
-                window.location.href = webUrl;
+                console.log("Exception triggered");
             }
         }
 
@@ -204,6 +193,28 @@
         document.getElementById('bilibiliSearch').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 performSearch('bilibili', e);
+            }
+        });
+
+        // Toggle button functionality
+        const webModeToggle = document.getElementById('webModeToggle');
+        const toggleLabel = document.getElementById('toggleLabel');
+
+        // Load saved preference from localStorage
+        const savedWebMode = localStorage.getItem('webModeEnabled');
+        if (savedWebMode === 'true') {
+            webModeToggle.checked = true;
+            toggleLabel.textContent = 'Web Browser';
+        }
+
+        // Update label and save preference when toggle changes
+        webModeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                toggleLabel.textContent = 'Web Browser';
+                localStorage.setItem('webModeEnabled', 'true');
+            } else {
+                toggleLabel.textContent = 'iPhone App';
+                localStorage.setItem('webModeEnabled', 'false');
             }
         });
     </script>

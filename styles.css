@@ -153,14 +153,14 @@ h1 {
 }
 
 .top-left {
-    top: 10%;
-    left: 10%;
+    top: 3%;
+    left: 5%;
     animation: float 3s ease-in-out infinite;
 }
 
 .bottom-right {
-    bottom: 10%;
-    right: 10%;
+    bottom: 5%;
+    right: 2%;
     animation: float 3s ease-in-out infinite reverse;
 }
 
@@ -223,13 +223,38 @@ h1 {
     }
 
     .top-left {
-        top: 20%;
-        left: 5%;
+        top: 0%;
+        left: 2%;
     }
 
     .bottom-right {
         bottom: 12%;
         right: 5%;
+    }
+
+    .toggle-container {
+        padding: 0;
+        margin-bottom: 20px;
+    }
+
+    .toggle-switch {
+        width: 36px;
+        height: 20px;
+    }
+
+    .toggle-slider:before {
+        height: 14px;
+        width: 14px;
+        left: 3px;
+        bottom: 3px;
+    }
+
+    input:checked + .toggle-slider:before {
+        transform: translateX(16px);
+    }
+
+    .toggle-label {
+        font-size: 12px;
     }
 }
 
@@ -237,4 +262,75 @@ h1 {
 .search-container {
     position: relative;
     z-index: 10;
+}
+
+/* Toggle Button Styles */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 30px;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    transition: none;
+}
+
+.toggle-container:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #007AFF;
+    transition: 0.3s;
+    border-radius: 24px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+    background-color: #34C759;
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(20px);
+}
+
+.toggle-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    user-select: none;
 } 
